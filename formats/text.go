@@ -9,6 +9,7 @@ import (
 type Text struct {
 }
 
-func (f Text) MakeWith(str string, loc string) error {
-	return ioutil.WriteFile(path.Join(loc, str+".txt"), []byte("hello"), os.ModePerm)
+func (f Text) MakeWith(str string, loc string) (string, error) {
+	newPath := path.Join(loc, str+".txt")
+	return newPath, ioutil.WriteFile(newPath, []byte("hello"), os.ModePerm)
 }

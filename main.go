@@ -1,26 +1,59 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"unicode"
 
+	"github.com/rjeczalik/notify"
+
 	"bigoh.co.uk/language-tool/formats"
+	"bigoh.co.uk/language-tool/replacer"
 	"bigoh.co.uk/language-tool/strings"
 )
 
 func main() {
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Katakana)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Khmer)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Imperial_Aramaic)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Lao)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Cc)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Nl)))
-	fmt.Println(strings.RunesToString(strings.AllRunes(unicode.Other_Grapheme_Extend)))
+	rootFolder := "/Users/neilmoore67/tmp/foo"
 
-	folder := formats.Folder{}
-	fmt.Println(folder.MakeWith(strings.NewRandomPicker(10, strings.AllRunes(unicode.Katakana)).Make(), "/Users/neilmoore67/tmp"))
+	replacer := replacer.NewMakerRegistry(rootFolder)
 
-	text := formats.Text{}
-	fmt.Println(text.MakeWith(strings.NewRandomPicker(10, strings.AllRunes(unicode.Nl)).Make(), "/Users/neilmoore67/tmp"))
-	fmt.Println(text.MakeWith(strings.NewRandomPicker(10, []rune(strings.Emoji)).Make(), "/Users/neilmoore67/tmp"))
+	runeSets := [][]rune{
+		[]rune(strings.Emoji),
+		strings.AllRunes(unicode.Katakana),
+		strings.AllRunes(unicode.Khmer),
+		strings.AllRunes(unicode.Nl),
+		strings.AllRunes(unicode.Lo),
+		strings.AllRunes(unicode.Sc),
+		strings.AllRunes(unicode.Greek),
+		strings.AllRunes(unicode.Other_Grapheme_Extend),
+		strings.AllRunes(unicode.Avestan),
+	}
+
+	formatSet := []formats.Format{
+		formats.Folder{},
+		formats.Text{},
+	}
+
+	for _, runes := range runeSets {
+		for _, format := range formatSet {
+			replacer.Add(format, strings.NewRandomPicker(10, runes))
+		}
+	}
+
+	done := make(chan bool)
+
+	c := make(chan notify.EventInfo, 1)
+	if err := notify.Watch(rootFolder, c, notify.Rename, notify.Remove); err != nil {
+		log.Fatal(err)
+	}
+	defer notify.Stop(c)
+	go func() {
+		for {
+			select {
+			case event := <-c:
+				replacer.Replace(event.Path())
+			}
+		}
+	}()
+
+	<-done
 }

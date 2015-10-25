@@ -8,6 +8,7 @@ import (
 type Folder struct {
 }
 
-func (f Folder) MakeWith(str string, loc string) error {
-	return os.MkdirAll(path.Join(loc, str), os.ModePerm)
+func (f Folder) MakeWith(str string, loc string) (string, error) {
+	newPath := path.Join(loc, str)
+	return newPath, os.MkdirAll(newPath, os.ModePerm)
 }
