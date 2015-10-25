@@ -33,8 +33,9 @@ func main() {
 		formats.Text{},
 	}
 
-	for _, runes := range runeSets {
-		for _, format := range formatSet {
+	for _, format := range formatSet {
+		replacer.Add(format, strings.NewNaughty())
+		for _, runes := range runeSets {
 			replacer.Add(format, strings.NewRandomPicker(10, runes))
 		}
 	}
