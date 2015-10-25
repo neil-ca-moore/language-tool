@@ -1,7 +1,11 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"unicode"
 
 	"github.com/rjeczalik/notify"
@@ -11,10 +15,9 @@ import (
 	"bigoh.co.uk/language-tool/strings"
 )
 
-func main() {
-	rootFolder := "/Users/neilmoore67/tmp/foo"
-
-	replacer := replacer.NewMakerRegistry(rootFolder)
+func allClasses() []strings.Class {
+	var res []strings.Class = make([]strings.Class, 0)
+	res = append(res, strings.NewNaughty())
 
 	runeSets := [][]rune{
 		[]rune(strings.Emoji),
@@ -28,22 +31,34 @@ func main() {
 		strings.AllRunes(unicode.Avestan),
 	}
 
-	formatSet := []formats.Format{
+	for _, runes := range runeSets {
+		res = append(res, strings.NewRandomPicker(10, runes))
+	}
+
+	return res
+}
+
+func allFormats() []formats.Format {
+	return []formats.Format{
 		formats.Folder{},
 		formats.Text{},
 	}
+}
 
-	for _, format := range formatSet {
-		replacer.Add(format, strings.NewNaughty())
-		for _, runes := range runeSets {
-			replacer.Add(format, strings.NewRandomPicker(10, runes))
+func setUpFolderListener(path string, stop <-chan bool) {
+	os.RemoveAll(path)
+	os.Mkdir(path, os.ModePerm)
+
+	replacer := replacer.NewMakerRegistry(path)
+
+	for _, format := range allFormats() {
+		for _, class := range allClasses() {
+			replacer.Add(format, class)
 		}
 	}
 
-	done := make(chan bool)
-
 	c := make(chan notify.EventInfo, 1000)
-	if err := notify.Watch(rootFolder, c, notify.Rename, notify.Remove); err != nil {
+	if err := notify.Watch(path, c, notify.Rename, notify.Remove); err != nil {
 		log.Fatal(err)
 	}
 	defer notify.Stop(c)
@@ -56,5 +71,29 @@ func main() {
 		}
 	}()
 
-	<-done
+	<-stop
+}
+
+func main() {
+	_ = "breakpoint"
+	help := flag.Bool("help", false, "Print help")
+	path := flag.String("path", "", "Path that is kept chock full of files and folders with nasty names")
+	flag.Parse()
+
+	if len(*path) != 0 {
+		absPath, err := filepath.Abs(*path)
+		if err != nil {
+			fmt.Println("error: path ", path, " doesn't work: ", err)
+		}
+		stopChan := make(chan bool)
+		setUpFolderListener(absPath, stopChan)
+		fmt.Println("Press any key to stop")
+		var anyStr string
+		fmt.Scanln(anyStr)
+		stopChan <- true
+	} else if *help {
+		flag.PrintDefaults()
+	} else {
+		flag.PrintDefaults()
+	}
 }
