@@ -41,7 +41,7 @@ func main() {
 
 	done := make(chan bool)
 
-	c := make(chan notify.EventInfo, 1)
+	c := make(chan notify.EventInfo, 1000)
 	if err := notify.Watch(rootFolder, c, notify.Rename, notify.Remove); err != nil {
 		log.Fatal(err)
 	}
