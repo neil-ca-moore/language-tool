@@ -3,8 +3,8 @@ package replacer
 import (
 	"path/filepath"
 
-	"github.com/neil-ca-moore/language-toollanguage-tool/formats"
-	"github.com/neil-ca-moore/language-toollanguage-tool/strings"
+	"github.com/neil-ca-moore/language-tool/formats"
+	"github.com/neil-ca-moore/language-tool/strings"
 )
 
 type FormatAndClass struct {

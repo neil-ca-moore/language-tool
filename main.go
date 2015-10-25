@@ -10,9 +10,9 @@ import (
 
 	"github.com/rjeczalik/notify"
 
-	"github.com/neil-ca-moore/language-toollanguage-tool/formats"
-	"github.com/neil-ca-moore/language-toollanguage-tool/replacer"
-	"github.com/neil-ca-moore/language-toollanguage-tool/strings"
+	"github.com/neil-ca-moore/language-tool/formats"
+	"github.com/neil-ca-moore/language-tool/replacer"
+	"github.com/neil-ca-moore/language-tool/strings"
 )
 
 func allClasses() []strings.Class {
