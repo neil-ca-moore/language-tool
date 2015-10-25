@@ -10,9 +10,9 @@ import (
 
 	"github.com/rjeczalik/notify"
 
-	"bigoh.co.uk/language-tool/formats"
-	"bigoh.co.uk/language-tool/replacer"
-	"bigoh.co.uk/language-tool/strings"
+	"github.com/neil-ca-moore/language-toollanguage-tool/formats"
+	"github.com/neil-ca-moore/language-toollanguage-tool/replacer"
+	"github.com/neil-ca-moore/language-toollanguage-tool/strings"
 )
 
 func allClasses() []strings.Class {
