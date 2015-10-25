@@ -19,20 +19,25 @@ func allClasses() []strings.Class {
 	var res []strings.Class = make([]strings.Class, 0)
 	res = append(res, strings.NewNaughty())
 
-	runeSets := [][]rune{
-		[]rune(strings.Emoji),
-		strings.AllRunes(unicode.Katakana),
-		strings.AllRunes(unicode.Khmer),
-		strings.AllRunes(unicode.Nl),
-		strings.AllRunes(unicode.Lo),
-		strings.AllRunes(unicode.Sc),
-		strings.AllRunes(unicode.Greek),
-		strings.AllRunes(unicode.Other_Grapheme_Extend),
-		strings.AllRunes(unicode.Avestan),
+	runeSets := map[string][]rune{
+		"emoji":    []rune(strings.Emoji),
+		"NFC":      []rune(strings.AccentedNFC()),
+		"NFD":      []rune(strings.AccentedNFD()),
+		"NFKC":     []rune(strings.AccentedNFKC()),
+		"NFKD":     []rune(strings.AccentedNFKD()),
+		"katakana": strings.AllRunes(unicode.Katakana),
+		"khmer":    strings.AllRunes(unicode.Khmer),
+		"Nl":       strings.AllRunes(unicode.Nl),
+		"Lo":       strings.AllRunes(unicode.Lo),
+		"Sc":       strings.AllRunes(unicode.Sc),
+		"Greek":    strings.AllRunes(unicode.Greek),
+		"Linear-B": strings.AllRunes(unicode.Linear_B),
+		"Arabic":   strings.AllRunes(unicode.Arabic),
+		"Symb":     strings.AllRunes(unicode.Symbol),
 	}
 
-	for _, runes := range runeSets {
-		res = append(res, strings.NewRandomPicker(10, runes))
+	for tag, runes := range runeSets {
+		res = append(res, strings.NewRandomPicker(tag, 10, runes))
 	}
 
 	return res
@@ -86,10 +91,10 @@ func main() {
 			fmt.Println("error: path ", path, " doesn't work: ", err)
 		}
 		stopChan := make(chan bool)
-		setUpFolderListener(absPath, stopChan)
-		fmt.Println("Press any key to stop")
-		var anyStr string
-		fmt.Scanln(anyStr)
+		go setUpFolderListener(absPath, stopChan)
+		fmt.Println("Press return key to stop")
+		var s string
+		fmt.Scanf("%s\n", s)
 		stopChan <- true
 	} else if *help {
 		flag.PrintDefaults()

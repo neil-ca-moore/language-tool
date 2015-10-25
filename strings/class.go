@@ -11,6 +11,7 @@ type Class interface {
 }
 
 type RandomPicker struct {
+	tag    string
 	length uint
 	runes  []rune
 	random *rand.Rand
@@ -21,11 +22,12 @@ func (r RandomPicker) Make() string {
 	for i := uint(0); i < r.length; i++ {
 		buffer.WriteRune(r.runes[r.random.Intn(len(r.runes))])
 	}
-	return buffer.String()
+	return r.tag + "_" + buffer.String()
 }
 
-func NewRandomPicker(length uint, runes []rune) RandomPicker {
+func NewRandomPicker(tag string, length uint, runes []rune) RandomPicker {
 	return RandomPicker{
+		tag:    tag,
 		length: length,
 		runes:  runes,
 		random: rand.New(rand.NewSource(time.Now().UnixNano())),

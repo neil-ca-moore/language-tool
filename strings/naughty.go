@@ -11,7 +11,7 @@ type Naughty struct {
 }
 
 func (n Naughty) Make() string {
-	return n.strings[n.random.Intn(len(n.strings))]
+	return "naughty-" + n.strings[n.random.Intn(len(n.strings))]
 }
 
 func NewNaughty() Naughty {
