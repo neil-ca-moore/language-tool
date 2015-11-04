@@ -6,13 +6,13 @@ package formats
 import (
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 type Text struct {
 }
 
 func (f Text) MakeWith(str string, loc string) (string, error) {
-	newPath := path.Join(loc, str+".txt")
+	newPath := filepath.Join(loc, str+".txt")
 	return newPath, ioutil.WriteFile(newPath, []byte("hello"), os.ModePerm)
 }

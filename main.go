@@ -83,7 +83,6 @@ func setUpFolderListener(path string, stop <-chan bool) {
 }
 
 func main() {
-	_ = "breakpoint"
 	help := flag.Bool("help", false, "Print help")
 	path := flag.String("path", "", "Path that is kept chock full of files and folders with nasty names")
 	flag.Parse()

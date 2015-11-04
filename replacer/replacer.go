@@ -4,8 +4,6 @@
 package replacer
 
 import (
-	"path/filepath"
-
 	"github.com/neil-ca-moore/language-tool/formats"
 	"github.com/neil-ca-moore/language-tool/strings"
 )
@@ -28,7 +26,7 @@ func NewMakerRegistry(rootFolder string) MakerRegistry {
 }
 
 func (m MakerRegistry) makeNew(maker FormatAndClass) {
-	newPath, err := maker.format.MakeWith(maker.class.Make(), filepath.Join(m.rootFolder))
+	newPath, err := maker.format.MakeWith(maker.class.Make(), m.rootFolder)
 	if err == nil {
 		m.existing[newPath] = maker
 	}
